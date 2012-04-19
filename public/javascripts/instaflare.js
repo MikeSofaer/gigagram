@@ -95,11 +95,11 @@ CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
 
     instaflare.filters = {
         chrisify: function(image) {
-            var canvas = canvasFromImage(image);
+            var canvas = instaflare.canvasFromImage(image);
 
-            saturation(canvas, 0.4);
-            contrast(canvas, 0.75);
-            tint(canvas, [20, 35, 10], [150, 160, 230]);
+            instaflare.filterParts.saturation(canvas, 0.4);
+            instaflare.filterParts.contrast(canvas, 0.75);
+            instaflare.filterParts.tint(canvas, [20, 35, 10], [150, 160, 230]);
 
             canvas.applyToImage();
         }
@@ -110,7 +110,7 @@ CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
         var sliced = Array.prototype.slice.call(images);
 
         iterator.forEach(function(image) {
-            instaflare[filter](image)
+            instaflare.filters[filter](image)
         });
 
     }
