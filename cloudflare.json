@@ -32,6 +32,12 @@
     "implements": "AMD",
     "scripts": {},
     "config": {
+        "details" : {
+            "Category": "Styling",
+            "Language": "Universal",
+            "Price": "Free ... for now",
+            "Restrictions": "None",
+        },
         "assets": {},
         "payment": {},
         "interface": [
