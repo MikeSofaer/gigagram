@@ -1,4 +1,4 @@
-CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
+CloudFlare.define("instaflare", ["cloudflare/iterator", "instaflare/config"], function(iterator, _config) {
     var instaflare = {};
     instaflare.filterHelpers = {
         safe: function(i) {
@@ -102,6 +102,14 @@ CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
             instaflare.filterParts.tint(canvas, [20, 35, 10], [150, 160, 230]);
 
             canvas.applyToImage();
+        },
+        matthusiasm: function(image) {
+            var canvas = instaflare.canvasFromImage(image);
+
+            instaflare.filterParts.saturation(canvas, 0.6);
+            instaflare.filterParts.tint(canvas, [200, 35, 100], [50, 80, 200]);
+
+            canvas.applyToImage();
         }
     }
 
@@ -109,13 +117,13 @@ CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
         var images = document.getElementsByTagName('img');
         var sliced = Array.prototype.slice.call(images);
 
-        iterator.forEach(function(image) {
+        iterator.forEach(images, function(image) {
             instaflare.filters[filter](image)
         });
-
     }
+
     window.addEventListener('load', function() {
-        instaflare.flare("chrisify");
+        instaflare.flare(_config.filter);
     }, true);
     return instaflare;
 });

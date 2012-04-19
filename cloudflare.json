@@ -48,12 +48,12 @@
                 "type": "select",
                 "options": [
                     {
-                        "label": "LOL WUT",
-                        "value": "lolwut"
+                        "label": "Chrisify: A yellow journey",
+                        "value": "chrisify"
                     },
                     {
-                        "label": "ORLY",
-                        "value": "yup"
+                        "label": "Matthusiasm: Crackling with blue energy",
+                        "value": "matthusiasm"
                     }
                 ]
             }
