@@ -1,0 +1,58 @@
+{
+    "name": "Gigagram",
+    "description": "Increases the social engagement on your site by creating a consistent visual feel",
+    "keywords" : [
+        "webmaster"
+        ],
+    "version": "0.0.1",
+    "contributors": [
+    {
+        "name" : "Michael Sofaer",
+        "email" : "michael@cloudflare.com"
+    },
+    {
+        "name" : "Chris Joel",
+        "email" : "chris@cloudflare.com"
+    }
+
+    ],
+        "repository" : {
+            "type" : "git",
+            "url" : "https://github.com/mikesofaer/gigagram.git"
+        },
+        "main" : "./public/javascripts/gigagram.js",
+        "dependencies" : {
+            "jquery"    :  "~1.7"
+        },
+        "licenses" : [
+        {
+            "type": "MIT",
+            "url": "http://www.opensource.org/licenses/MIT"
+		}],
+        "implements" : "AMD",
+        "scripts" : {
+        },
+        "config" : {
+            "assets" : {
+            },
+            "payment": {},
+            "interface": [
+            {
+                "id": "filter",
+                "name": "Choose your Style",
+                "description": "These highly tested filters will all make your site a cleaner experience. Choose the one that's right for you!",
+                "type": "select",
+                "options": [
+                {
+                    "label": "LOL WUT",
+                    "value": "lolwut"
+                },
+                {
+                    "label": "ORLY",
+                    "value": "yup"
+                }
+
+            }
+            ]
+        }
+}
