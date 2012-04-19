@@ -10,14 +10,14 @@ CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
     };
 
     instaflare.createFilter = function(getPixel) {
-        function processPixel(data, i,j, options){
+        function processPixel(data, i,j,width, options){
             var index = (i*width*4) + (j*4),
                         rgb = getPixel(
                             data[index],
                             data[index + 1],
                             data[index + 2],
                             data[index + 3],
-                            args
+                            options
                         );
 
                     data[index]     = rgb.r;
@@ -38,7 +38,7 @@ CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
 
             for(i = 0; i < height; i++)
                 for(j = 0; j < width; j++)
-                    processPixel(data, i, j, options);
+                    processPixel(data, i, j,width, options);
             context.putImageData(imageData, 0, 0);
         };
     }
@@ -59,9 +59,9 @@ CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
             var val = args[0];
 
             return {
-                r: instaflare.filterHelpers.safe(255 * calc(r / 255, val)),
-                g: instaflare.filterHelpers.safe(255 * calc(g / 255, val)),
-                b: instaflare.filterHelpers.safe(255 * calc(b / 255, val)),
+                r: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.calc(r / 255, val)),
+                g: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.calc(g / 255, val)),
+                b: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.calc(b / 255, val)),
                 a: a
             };
         }),
