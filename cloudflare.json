@@ -1,5 +1,5 @@
 {
-    "name": "Gigagram",
+    "name": "Instaflare",
     "description": "Increases the social engagement on your site by creating a consistent visual feel",
     "keywords": [
         "webmaster"
@@ -19,7 +19,7 @@
         "type": "git",
         "url": "https://github.com/mikesofaer/gigagram.git"
     },
-    "main": "./public/javascripts/gigagram.js",
+    "main": "./public/javascripts/instaflare.js",
     "dependencies": {
         "jquery": "~1.7"
     },
