@@ -79,8 +79,8 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
                 a: a
             };
         }),
-        posterize : instaflare.createFilter(function(r,g,b,a,levels) {
-            var step = Math.floor(255 / levels);
+        posterize : instaflare.createFilter(function(r,g,b,a,args) {
+            var step = Math.floor(255 / args[0]);
             return {
                 r: instaflare.filterHelpers.safe(Math.floor(r / step) * step),
                 g: instaflare.filterHelpers.safe(Math.floor(g / step) * step),
@@ -88,7 +88,7 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
                 a: a
             };
         }),
-        grayScale : instaflare.createFilter(function(r,g,b,a) {
+        grayscale : instaflare.createFilter(function(r,g,b,a) {
             var avg = (r + g + b) / 3;
             return {
                 r: instaflare.filterHelpers.safe(avg),
@@ -97,7 +97,8 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
                 a: a
             };
         }),
-        bias : instaflare.createFilter(function(r,g,b,a,val) {
+        bias : instaflare.createFilter(function(r,g,b,a,args) {
+            var val = args[0];
                 return {
                     r: instaflare.filterHelpers.safe(r * instaflare.filterHelpers.bias(r / 255, val)),
                     g: instaflare.filterHelpers.safe(g * instaflare.filterHelpers.bias(g / 255, val)),
@@ -105,7 +106,8 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
                     a: a
                 };
         }),
-        brightness : instaflare.createFilter(function(r,g,b,a,val) {
+        brightness : instaflare.createFilter(function(r,g,b,a,args) {
+            var val = args[0];
             return {
                 r: instaflare.filterHelpers.safe(r + val),
                 g: instaflare.filterHelpers.safe(g + val),
@@ -132,51 +134,57 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
     };
 
     instaflare.filters = {
-        hangover: function(canvas) {
-            instaflare.filterParts.saturation(canvas, 0.4)
-                                  .contrast(canvas, 0.75)
-                                  .tint(canvas, [20, 35, 10], [150, 160, 230])
-        },
         drugstore: function(canvas) {
             instaflare.filterParts
-                .saturation(canvas, 0.3);
+                .saturation(canvas, 0.3)
                 .posterize(canvas, 70)
-                .tint([50, 35, 10], [190, 190, 230]);
+                .tint(canvas, [50, 35, 10], [190, 190, 230]);
         },
-        truffaut: function(canvas) {
+        hangover: function(canvas) {
             instaflare.filterParts
                 .tint(canvas, [60, 35, 10], [170, 170, 230])
                 .saturation(canvas, 0.8);
         },
         madison: function(canvas) {
             instaflare.filterParts
-                .grayscale(canvas);
+                .grayscale(canvas)
                 .tint(canvas,[60,60,30], [210, 210, 210]);
         },
-        jaundice: function(canvas) {
+        bluerinse: function(canvas) {
             instaflare.filterParts
                 .tint(canvas, [30, 40, 30], [120, 170, 210])
                 .contrast(canvas, 0.75)
                 .bias(canvas, 1)
                 .saturation(canvas, 0.6)
                 .brightness(canvas, 20);
+        },
+        jaundice: function(canvas) {
+            instaflare.filterParts
+                .saturation(canvas, 0.4)
+                .contrast(canvas, 0.75)
+                .tint(canvas, [20, 35, 10], [150, 160, 230]);
         }
     }
 
     instaflare.canvasIsSupported = (function() {
-
         var canvas = document.createElement('canvas');
         return !!(canvas.getContext && canvas.getContext('2d'));
     })(),
+
+    instaflare.processImage = function(image, filter) {
+        var canvas = instaflare.canvasFromImage(image);
+        instaflare.filters[filter](canvas);
+        canvas.applyToImage();
+    }
 
     instaflare.flare = function(filter){
         if(instaflare.canvasIsSupported) {
             var images = document.getElementsByTagName('img');
             var sliced = Array.prototype.slice.call(images);
             iterator.forEach(sliced, function(image) {
-                var canvas = instaflare.canvasFromImage(image);
-                instaflare.filters[filter](canvas);
-                canvas.applyToImage();
+                setTimeout(function() {
+                    instaflare.processImage(image, filter);
+                }, 0);
             });
         }
     }
@@ -184,6 +192,7 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
     dom.addEventListener(window, 'load', function() {
         instaflare.flare(_config.filter);
     }, true);
+
     return instaflare;
 });
 

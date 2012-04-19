@@ -56,10 +56,6 @@
                         "value": "drugstore"
                     },
                     {
-                        "label": "Truffaut: You've always dreamed of appearing in a European art house movie",
-                        "value": "truffaut"
-                    },
-                    {
                         "label": "Madison: You like to think you're Don Draper, but you're actually Pete Campbell",
                         "value": "madison"
                     },
@@ -70,18 +66,6 @@
                     {
                         "label": "Blue Rinse: You tried to wash your socks and your white shirts together, didn't you?",
                     	"value": "bluerinse"
-                    },
-                    {
-                        "label": "Cataract: This is how Grandma sees you",
-                        "value": "cataract"
-                    },
-                    {
-                        "label": "Doves Cry: A Prince-ly purple vibe",
-                        "value": "dovescry"
-                    },
-                    {
-                        "label": "Williamsburg: Don't you wish you'd lived there before it was cool to live there?",
-                        "value": "williamsburg"
                     }
                 ]
             }
