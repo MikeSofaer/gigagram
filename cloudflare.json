@@ -54,31 +54,31 @@
                     {
                         "label": "Drugstore: Perhaps you shouldn't have gone for the cheapest possible photo printing",
                         "value": "drugstore"
-                    }
+                    },
                     {
                         "label": "Truffaut: You've always dreamed of appearing in a European art house movie",
                         "value": "truffaut"
-                    }
+                    },
                     {
                         "label": "Madison: You like to think you're Don Draper, but you're actually Pete Campbell",
                         "value": "madison"
-                    }
+                    },
                     {
                         "label": "Jaundice: The relaxing yellow hue that accompanies a severe liver problem",
                     	"value": "jaundice"
-                    }
+                    },
                     {
                         "label": "Blue Rinse: You tried to wash your socks and your white shirts together, didn't you?",
                     	"value": "bluerinse"
-                    }
+                    },
                     {
                         "label": "Cataract: This is how Grandma sees you",
                         "value": "cataract"
-                    }
+                    },
                     {
                         "label": "Doves Cry: A Prince-ly purple vibe",
                         "value": "dovescry"
-                    }
+                    },
                     {
                         "label": "Williamsburg: Don't you wish you'd lived there before it was cool to live there?",
                         "value": "williamsburg"
