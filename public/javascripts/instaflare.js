@@ -1,4 +1,4 @@
-CloudFlare.define("instaflare", ["cloudflare/iterator", "instaflare/config"], function(iterator, _config) {
+CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloudflare/console", "instaflare/config"], function(iterator, dom, console, _config) {
     var instaflare = {};
     instaflare.filterHelpers = {
         safe: function(i) {
@@ -113,16 +113,26 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "instaflare/config"], fu
         }
     }
 
-    instaflare.flare = function(filter){
-        var images = document.getElementsByTagName('img');
-        var sliced = Array.prototype.slice.call(images);
+    instaflare.canvasIsSupported = (function() {
 
-        iterator.forEach(images, function(image) {
-            instaflare.filters[filter](image)
-        });
+        var canvas = document.createElement('canvas');
+        return !!(canvas.getContext && canvas.getContext('2d'));
+    })(),
+
+    instaflare.flare = function(filter){
+
+        if(instaflare.canvasIsSupported) {
+
+            var images = document.getElementsByTagName('img');
+            var sliced = Array.prototype.slice.call(images);
+
+            iterator.forEach(images, function(image) {
+                instaflare.filters[filter](image)
+            });
+        }
     }
 
-    window.addEventListener('load', function() {
+    dom.addEventListener(window, 'load', function() {
         instaflare.flare(_config.filter);
     }, true);
     return instaflare;
