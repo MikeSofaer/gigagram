@@ -4,8 +4,11 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
         safe: function(i) {
             return Math.min(255, Math.max(0, i));
         },
-        calc: function(f, c) {
+        contrast: function(f, c) {
             return (f-0.5) * c + 0.5;
+        },
+        bias: function(f, bi){
+            return f / ((1.0 / bi - 1.9) * (0.9 - f) + 1);
         }
     };
 
@@ -40,6 +43,7 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
                 for(j = 0; j < width; j++)
                     processPixel(data, i, j,width, options);
             context.putImageData(imageData, 0, 0);
+            return instaflare.filterParts;
         };
     }
 
@@ -59,9 +63,9 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
             var val = args[0];
 
             return {
-                r: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.calc(r / 255, val)),
-                g: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.calc(g / 255, val)),
-                b: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.calc(b / 255, val)),
+                r: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.contrast(r / 255, val)),
+                g: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.contrast(g / 255, val)),
+                b: instaflare.filterHelpers.safe(255 * instaflare.filterHelpers.contrast(b / 255, val)),
                 a: a
             };
         }),
@@ -72,6 +76,40 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
                 r: instaflare.filterHelpers.safe((r - minRGB[0]) * ((255 / (maxRGB[0] - minRGB[0])))),
                 g: instaflare.filterHelpers.safe((g - minRGB[1]) * ((255 / (maxRGB[1] - minRGB[1])))),
                 b: instaflare.filterHelpers.safe((b - minRGB[2]) * ((255 / (maxRGB[2] - minRGB[2])))),
+                a: a
+            };
+        }),
+        posterize : instaflare.createFilter(function(r,g,b,a,levels) {
+            var step = Math.floor(255 / levels);
+            return {
+                r: instaflare.filterHelpers.safe(Math.floor(r / step) * step),
+                g: instaflare.filterHelpers.safe(Math.floor(g / step) * step),
+                b: instaflare.filterHelpers.safe(Math.floor(b / step) * step),
+                a: a
+            };
+        }),
+        grayScale : instaflare.createFilter(function(r,g,b,a) {
+            var avg = (r + g + b) / 3;
+            return {
+                r: instaflare.filterHelpers.safe(avg),
+                g: instaflare.filterHelpers.safe(avg),
+                b: instaflare.filterHelpers.safe(avg),
+                a: a
+            };
+        }),
+        bias : instaflare.createFilter(function(r,g,b,a,val) {
+                return {
+                    r: instaflare.filterHelpers.safe(r * instaflare.filterHelpers.bias(r / 255, val)),
+                    g: instaflare.filterHelpers.safe(g * instaflare.filterHelpers.bias(g / 255, val)),
+                    b: instaflare.filterHelpers.safe(b * instaflare.filterHelpers.bias(b / 255, val)),
+                    a: a
+                };
+        }),
+        brightness : instaflare.createFilter(function(r,g,b,a,val) {
+            return {
+                r: instaflare.filterHelpers.safe(r + val),
+                g: instaflare.filterHelpers.safe(g + val),
+                b: instaflare.filterHelpers.safe(b + val),
                 a: a
             };
         })
@@ -94,22 +132,34 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
     };
 
     instaflare.filters = {
-        chrisify: function(image) {
-            var canvas = instaflare.canvasFromImage(image);
-
-            instaflare.filterParts.saturation(canvas, 0.4);
-            instaflare.filterParts.contrast(canvas, 0.75);
-            instaflare.filterParts.tint(canvas, [20, 35, 10], [150, 160, 230]);
-
-            canvas.applyToImage();
+        hangover: function(canvas) {
+            instaflare.filterParts.saturation(canvas, 0.4)
+                                  .contrast(canvas, 0.75)
+                                  .tint(canvas, [20, 35, 10], [150, 160, 230])
         },
-        matthusiasm: function(image) {
-            var canvas = instaflare.canvasFromImage(image);
-
-            instaflare.filterParts.saturation(canvas, 0.6);
-            instaflare.filterParts.tint(canvas, [200, 35, 100], [50, 80, 200]);
-
-            canvas.applyToImage();
+        drugstore: function(canvas) {
+            instaflare.filterParts
+                .saturation(canvas, 0.3);
+                .posterize(canvas, 70)
+                .tint([50, 35, 10], [190, 190, 230]);
+        },
+        truffaut: function(canvas) {
+            instaflare.filterParts
+                .tint(canvas, [60, 35, 10], [170, 170, 230])
+                .saturation(canvas, 0.8);
+        },
+        madison: function(canvas) {
+            instaflare.filterParts
+                .grayscale(canvas);
+                .tint(canvas,[60,60,30], [210, 210, 210]);
+        },
+        jaundice: function(canvas) {
+            instaflare.filterParts
+                .tint(canvas, [30, 40, 30], [120, 170, 210])
+                .contrast(canvas, 0.75)
+                .bias(canvas, 1)
+                .saturation(canvas, 0.6)
+                .brightness(canvas, 20);
         }
     }
 
@@ -120,14 +170,13 @@ CloudFlare.define("instaflare", ["cloudflare/iterator", "cloudflare/dom", "cloud
     })(),
 
     instaflare.flare = function(filter){
-
         if(instaflare.canvasIsSupported) {
-
             var images = document.getElementsByTagName('img');
             var sliced = Array.prototype.slice.call(images);
-
-            iterator.forEach(images, function(image) {
-                instaflare.filters[filter](image)
+            iterator.forEach(sliced, function(image) {
+                var canvas = instaflare.canvasFromImage(image);
+                instaflare.filters[filter](canvas);
+                canvas.applyToImage();
             });
         }
     }
