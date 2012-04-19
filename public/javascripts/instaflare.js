@@ -25,17 +25,17 @@ CloudFlare.define("instaflare", ["cloudflare/iterator"], function(iterator) {
                     data[index + 2] = rgb.b;
                     data[index + 3] = rgb.a;
         }
-        var width = canvas.width,
-            height = canvas.height,
-            context = canvas.getContext('2d'),
-            imageData = context.getImageData(0, 0, width, height),
-            data = imageData.data,
-            options = Array.prototype.slice.call(arguments, 1),
-            i,
-            j;
-
 
         return function(canvas) {
+            var width = canvas.width,
+                height = canvas.height,
+                context = canvas.getContext('2d'),
+                imageData = context.getImageData(0, 0, width, height),
+                data = imageData.data,
+                options = Array.prototype.slice.call(arguments, 1),
+                i,
+                j;
+
             for(i = 0; i < height; i++)
                 for(j = 0; j < width; j++)
                     processPixel(data, i, j, options);
